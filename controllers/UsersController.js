@@ -1,47 +1,33 @@
-import sha1 from 'sha1';
-import Queue from 'bull';
-import dbClient from '../utils/db';
+const sha1 = require('sha1');
+const dbClient = require('../utils/db');
 
-const userQueue = new Queue('userQueue');
+const UsersController = {
+  async postNew(req, res) {
+    const { email, password } = req.body;
 
-class UsersController {
-  static async postNew(request, response) {
-    const { email, password } = request.body;
-
-    if (!email) return response.status(400).send({ error: 'Missing email' });
-
-    if (!password)
-      return response.status(400).send({ error: 'Missing password' });
-
-    const emailExists = await dbClient.usersCollection.findOne({ email });
-
-    if (emailExists)
-      return response.status(400).send({ error: 'Already exist' });
-
-    const sha1Password = sha1(password);
-
-    let result;
-    try {
-      result = await dbClient.usersCollection.insertOne({
-        email,
-        password: sha1Password,
-      });
-    } catch (err) {
-      await userQueue.add({});
-      return response.status(500).send({ error: 'Error creating user' });
+    if (!email) {
+      return res.status(400).json({ error: 'Missing email' });
+    }
+    if (!password) {
+      return res.status(400).json({ error: 'Missing password' });
     }
 
-    const user = {
-      id: result.insertedId,
-      email,
-    };
+    try {
+      const user = await dbClient.getUserByEmail(email);
+      if (user) {
+        return res.status(400).json({ error: 'Already exist' });
+      }
 
-    await userQueue.add({
-      userId: result.insertedId.toString(),
-    });
+      const hashedPwd = sha1(password);
+      const newUser = await dbClient.createUser(email, hashedPwd);
 
-    return response.status(201).send(user);
-  }
-}
+      res.status(201).json({ email: newUser.email, id: newUser._id });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+    return null;
+  },
+};
 
-export default UsersController;
+module.exports = UsersController;
