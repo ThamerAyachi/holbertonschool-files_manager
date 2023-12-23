@@ -149,14 +149,16 @@ class FilesController {
       .findOne({ _id: ObjectId(redisToken) });
     if (!user) return response.status(401).send({ error: 'Unauthorized' });
 
-    const parentId = request.query.parentId || 0;
-    // parentId = parentId === '0' ? 0 : parentId;
+    let parentId = request.query.parentId || 0;
+    parentId = parentId === '0' ? 0 : parentId;
 
     const pagination = request.query.page || 0;
     // pagination = Number.isNaN(pagination) ? 0 : pagination;
     // pagination = pagination < 0 ? 0 : pagination;
 
-    const aggregationMatch = { $and: [{ parentId }] };
+    const aggregationMatch = {
+      $and: [{ parentId: parentId === 0 ? 0 : ObjectId(parentId) }],
+    };
     let aggregateData = [
       { $match: aggregationMatch },
       { $skip: pagination * 20 },
