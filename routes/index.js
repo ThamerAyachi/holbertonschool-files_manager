@@ -1,6 +1,7 @@
 import AppController from '../controllers/AppController';
 import UsersController from '../controllers/UsersController';
 import AuthController from '../controllers/AuthController';
+import FilesController from '../controllers/FilesController';
 
 /* eslint-disable */
 const express = require('express');
@@ -27,6 +28,9 @@ const router = (app) => {
   );
   paths.get('/users/me', (request, response) =>
     UsersController.getMe(request, response)
+  );
+  paths.post('/files', (request, response) =>
+    FilesController.postUpload(request, response)
   );
 };
 
