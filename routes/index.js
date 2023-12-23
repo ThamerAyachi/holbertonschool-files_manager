@@ -1,6 +1,7 @@
 import AppController from '../controllers/AppController';
 import UsersController from '../controllers/UsersController';
 
+/* eslint-disable */
 const express = require('express');
 
 const router = (app) => {
