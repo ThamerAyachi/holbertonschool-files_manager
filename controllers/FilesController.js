@@ -41,7 +41,7 @@ class FilesController {
     let fileParentId = req.body.parentId || 0;
     fileParentId = fileParentId === '0' ? 0 : fileParentId;
 
-    if (fileParentId == 0) {
+    if (fileParentId !== 0) {
       const parentFile = await DBClient.db
         .collection('files')
         .findOne({ _id: ObjectId(fileParentId) });
