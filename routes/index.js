@@ -44,6 +44,9 @@ const router = (app) => {
   paths.put('/files/:id/unpublish', (request, response) =>
     FilesController.putUnpublish(request, response)
   );
+  paths.get('/files/:id/data', (request, response) =>
+    FilesController.getFile(request, response)
+  );
 };
 
 module.exports = router;
