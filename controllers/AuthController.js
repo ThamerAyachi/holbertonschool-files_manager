@@ -18,7 +18,7 @@ class AuthController {
     };
 
     if (!credentials.email || !credentials.password)
-      return response.status(401).send({ error: 'Unauthorized' });
+      return res.status(401).send({ error: 'Unauthorized' });
 
     credentials.password = sha1(credentials.password);
 
@@ -44,7 +44,7 @@ class AuthController {
     if (!redisToken) return res.status(401).send({ error: 'Unauthorized' });
 
     await RedisClient.del(`auth_${token}`);
-    return response.status(204).send();
+    return res.status(204).send();
   }
 }
 
