@@ -38,6 +38,12 @@ const router = (app) => {
   paths.get('/files', (request, response) =>
     FilesController.getIndex(request, response)
   );
+  paths.put('/files/:id/publish', (request, response) =>
+    FilesController.putPublish(request, response)
+  );
+  paths.put('/files/:id/unpublish', (request, response) =>
+    FilesController.putUnpublish(request, response)
+  );
 };
 
 module.exports = router;
